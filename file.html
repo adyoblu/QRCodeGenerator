@@ -1,0 +1,244 @@
+<!-- HTML -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Generator</title>
+    <!-- css font awesome link cloudflare -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- css font pentru text -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chivo:ital,wght@0,300;0,400;0,700;1,400&family=Fira+Code:wght@300;400;600;700&family=Inter:wght@300;400;500;700&family=Josefin+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,400;1,700&family=Libre+Baskerville&family=Merriweather&family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Quicksand&family=Ubuntu:ital,wght@0,400;0,700;1,400;1,700&display=swap"/>
+</head>
+<body>
+
+    <div class="qr-code-generator-sec generator-link-sec">
+        <div class="user-input-section">
+            <section class="user-input">
+                <p style="font-size: 30px;">QR Generator</p>
+                <input
+                    type="text"
+                    value="https://github.com/adyoblu"
+                    name="input_text"
+                    id="user_input"
+                    autocomplete="off"
+                />
+                <button class="button" type="submit" onclick="generate()">Trimite<i class="fa-solid fa-rotate"></i></button>
+            </section>
+        </div>
+        <div class="qr-code-container">
+            <div class="qr-code" id="qrcode" style="width:250px; height:250px; margin-top:15px;"></div>
+        </div>
+    </div>
+
+<!-- scripturi jquery selector si qrcode -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>   
+
+<!-- JavaScript -->
+<script type="text/javascript">
+//variabile  globale
+var qr = new QRCode(document.getElementById("qrcode"), {
+        width: 250,
+        height: 250,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H,
+});
+var userInput = document.getElementById("user_input");
+let qr_code_element = document.querySelector(".qr-code");//Selectez clasa qr-code cu querySelector din queryJS
+
+generate();//pentru a genera qr la valoarea initiala setata de mine in input text
+
+function generate(){
+    if (!userInput.value) {
+        alert("Input gol");
+        userInput.focus();
+        return
+    }
+    
+    qr.makeCode(userInput.value);
+}
+
+let download = document.createElement("button");//creez buton pt download
+qr_code_element.appendChild(download);//dau append qr_code_element
+
+let download_link = document.createElement("a");
+download_link.setAttribute("download", "qr_code.png");
+download_link.innerHTML = `Download <i class="fa-solid fa-download"></i>`;
+
+download.appendChild(download_link);
+
+let qr_code_img = document.querySelector(".qr-code img");
+let qr_code_canvas = document.querySelector("canvas");
+
+if (qr_code_img.getAttribute("src") == null) {
+    setTimeout(() => {
+        download_link.setAttribute("href", `${qr_code_canvas.toDataURL()}`);
+    }, 300);
+} else {
+    setTimeout(() => {
+        download_link.setAttribute(
+            "href",
+            `${qr_code_img.getAttribute("src")}`
+        );
+    }, 300);
+}
+
+//cand este apasata tasta enter(code 13) va apela functia generate()
+$("#user_input").on("keydown", function (e) {
+    if (e.keyCode == 13) {
+        generate();
+    }
+});
+</script>
+
+<style>
+
+:root {
+    font-size: 66%;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+}
+button:hover {
+    cursor: pointer;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    background-color: #344966;
+    height: 100vh;
+    max-height: fit-content;
+    position: relative;
+}
+.qr-code-generator-sec {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 30rem 0 5rem 0;
+
+        @media screen and (max-width: 50em) {
+            flex-direction: column;
+        }
+}
+
+/* user input */
+body .user-input-section {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    background-color: rgba(255, 255, 255, 0.04);
+    height: 80%;
+    justify-content: center;
+    border-radius: 1rem;
+}
+@media screen and (max-width: 50em) {
+    body .user-input-section {
+        margin: 2rem 0 0 0;
+        width: 85%;
+        padding: 2.5rem;
+    }
+}
+body .user-input-section .user-input {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+}
+body .user-input-section .user-input .error {
+    font-family: "Poppins", sans-serif;
+    font-size: 2rem;
+    background-color: black;
+    color: white;
+    padding: 1rem;
+    border: 0.2rem solid red;
+    border-radius: 0.8rem;
+}
+body .user-input-section .user-input label {
+    text-align: center;
+    font-size: 1.5rem;
+    font-family: "Poppins", sans-serif;
+}
+body .user-input-section .user-input input {
+    width: 80%;
+    max-width: 35rem;
+    font-family: "Poppins", sans-serif;
+    outline: none;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #b4cded;
+    text-align: center;
+    padding: 1.5rem 1rem;
+    margin: 1rem 0rem 2rem 0rem;
+    color: black;
+}
+
+/* butoane din pagina */
+body .button {
+    outline: none;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 1.5rem 2.5rem;
+    background-color: #bfcc94;
+    color: black;
+    font-family: "Nunito", sans-serif;
+    font-size: 1.6rem;
+}
+body .button i {
+    margin-left: 1rem;
+}
+
+/* containteru de qr cu tot ce contine */
+body .qr-code-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+}
+@media screen and (max-width: 50em) {
+    body .qr-code-container {
+        width: 100%;
+        margin: 8rem 0;
+    }
+}
+body .qr-code-container .qr-code {
+    display: flex;
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 0.041);
+    width: fit-content;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+}
+body .qr-code-container .qr-code button {
+    display: flex;
+    justify-content: center;
+    background-color: #bfcc94;
+    color: black;
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-top: 2.5rem;
+    border-radius: 1rem;
+}
+body .qr-code-container .qr-code button a {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.5rem;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: black;
+    padding: 1rem;
+}
+</style>
+</body>
+</html>
